@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 必须滴 通过namespace 和 dao接口映射 -->
+<mapper namespace="com.beifeng.dao.cc.IManualSignDaocc">
+
+<!-- -映射表字段 -->
+	<!-- 签卡类对应关系 -->
+	<resultMap type="ManualSign" id="standardMap">
+		<result column="SignId" property="signId" />
+		<result column="SignTime" property="signTime" />
+		<result column="SignDesc" property="signDesc" />
+		<result column="SignTag" property="signTag" />
+	</resultMap>
+	<!-- 用户类属性与签卡类对应关系 -->
+	<resultMap type="ManualSign" id="userInfoMap" extends="standardMap">
+		<association property="userInfo" column="UserId" javaType="UserInfo">
+			<result column="UserId" property="userId"/>
+			<result column="UserName" property="userName"/>
+			<result column="PassWord" property="passWord"/>
+			<!-- <result column="DepartId" property="departId"/> -->
+			<result column="Gender" property="gender"/>
+			 <result column="RoleId" property="roleId"/> 
+		</association>
+	</resultMap>
+	
+	<!-- 部门类属性与用户之间的对应关系 -->
+	<resultMap type="ManualSign" extends="userInfoMap" id="depMap">
+		<association property="departInfo" column="DepartId" javaType="DepartInfo">
+			<result column="DepartId" property="departId" />
+			<result column="DepartName" property="departName"/>
+			<result column="PrincipalUser" property="principalUser" />
+			<result column="ConnectTelNo" property="connectTelNo" />
+			<result column="ConnectMobileTelNo" property="connectMobileTelNo" />
+			<result column="Faxes" property="faxes" />
+		</association>
+	</resultMap>
+	
+	<!-- 机构类属性与部门之间的对应关系 -->
+	<resultMap type="ManualSign" id="allMap" extends="depMap">
+		<association property="branchInfo" column="branchId" javaType="BranchInfo">
+			<result column="BranchId" property="branchId"/>
+			<result column="BranchName" property="branchName"/>
+			<result column="BranchShortName" property="branchShortName"/>
+		</association>
+	</resultMap>
+		
+	<!-- 通过USERID查询签卡人信息 -->
+	<select id="queryManByUserId"  resultMap="allMap" >
+		select manualsign.SignTime,manualsign.SignDesc,manualsign.SignTag,
+		 userinfo.UserId,userinfo.UserName,departinfo.DepartName,branchinfo.BranchName
+		from manualsign 
+		inner join userinfo
+		on manualsign.UserId=userinfo.UserId
+		inner join departinfo
+		on departinfo.DepartId=userinfo.DepartId
+		inner join branchinfo
+		on branchinfo.BranchId=departinfo.BranchId
+		where  manualsign.SignId=#{signId}
+	</select>
+	
+	<!-- 添加签卡 -->
+	<insert id="insertManualSign" parameterType="ManualSign" useGeneratedKeys="true" keyProperty="signId" >
+		insert into manualsign(SignId,SignTime,SignDesc,UserId,SignTag) 
+		 values(#{signId},#{signTime},
+		#{signDesc},#{userInfo.userId},#{signTag});
+	</insert>
+	
+</mapper>

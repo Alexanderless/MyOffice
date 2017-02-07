@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.beifeng.dao.dom.FileTypeInfoDao">
+	<select id="queryFileTypeInfo" resultMap="FileTypeInfoMap">
+		select * from filetypeinfo
+	</select>
+	
+	<resultMap type="FileTypeInfo" id="FileTypeInfoMap">
+		<result column="FileTypeId" property="fileTypeId"/>
+		<result column="FileTypeName" property="fileTypeName"/>
+		<result column="FileTypeImage" property="fileTypeImage"/>
+		<result column="FileTypeSuffix" property="fileTypeSuffix"/>
+	</resultMap>
+</mapper>

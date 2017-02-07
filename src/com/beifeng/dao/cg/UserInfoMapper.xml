@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 必须滴 通过namespace 和 dao接口映射 -->
+<mapper namespace="com.beifeng.dao.cg.IUserInfoDaocg">
+<!-- -映射表字段 -->
+	<resultMap type="UserInfo" id="UserInfoMap">
+		<result column="UserId" property="userId" />
+		<result column="UserName" property="userName"/>
+		<result column="PassWord" property="passWord" />
+		<result column="Gender" property="gender" />
+	<!-- 	<result column="RoleId" property="roleId" /> -->
+		<!-- <result column="UserState" property="userState" /> -->
+	</resultMap>
+	<resultMap type="UserInfo" id="UserInfoAllMap" extends="UserInfoMap">
+		<association property="departInfo" javaType="DepartInfo" column="DepartId">
+			<result column="DepartId" property="departId" />
+			<result column="DepartName" property="departName" />
+			<result column="ConnectTelNo" property="connectTelNo" />
+			<result column="ConnectMobileTelNo" property="connectMobileTelNo" />
+			<result column="Faxes" property="faxes" />
+		</association>
+		
+		<association property="roleInfo" javaType="RoleInfo" column="RoleId">
+			<result column="RoleId" property="roleId" />
+			<result column="RoleName" property="roleName" />
+			<result column="RoleDesc" property="roleDesc" />
+		</association>
+		
+		<association property="userState" javaType="UserState" column="UserStateId">
+			<result column="UserStateId" property="userStateId" />
+			<result column="UserStateName" property="userStateName" />
+		</association>
+	</resultMap>
+	<!-- <resultMap type="UserInfo" extends="UserInfoMap" id="depMap">
+	部门类属性与员工信息表之间的对应关系
+	 <association property="departInfo" column="DepartId" javaType="DepartInfo">
+		<result column="DepartId" property="departId" />
+		<result column="DepartName" property="departName"/>
+		<result column="PrincipalUser" property="principalUser" />
+		<result column="ConnectTelNo" property="connectTelNo" />
+		<result column="ConnectMobileTelNo" property="connectMobileTelNo" />
+		<result column="Faxes" property="faxes" />
+	</association>
+	</resultMap>  -->
+	<!-- <resultMap type="DepartInfo" id="allMap" extends="depMap">
+		<association property="branchInfo" column="branchId" javaType="BranchInfo">
+			<result column="BranchId" property="branchId"/>
+			<result column="BranchName" property="branchName"/>
+			<result column="BranchShortName" property="branchShortName"/>
+		</association>
+	</resultMap> -->
+	
+	<select id="queryUserInfo" parameterType="Integer" resultMap="UserInfoAllMap" >
+		select * from userinfo
+		where userinfo.DepartId=#{departId};
+	</select>
+	
+ 	<!-- <select id="queryUserBydepartId" resultMap="depMap" >
+		select * from userinfo,departinfo where userinfo.DepartId=departinfo.DepartId
+		and departinfo.DepartId=#{departId}
+	</select> -->
+</mapper>

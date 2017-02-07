@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.beifeng.dao.dom.AccessoryFileDao">
+<!-- 查询文件fileId为fileId的accessoryfile -->
+<select id="queryByFiledid" parameterType="int" resultMap="AccessoryFileMapAll">
+	select * from accessoryfile a,filetypeinfo f where a.AccessoryType=f.FileTypeId and FileId=#{fileId}
+</select>
+
+<insert id="addAcessory" parameterType="AccessoryFile">
+	insert accessoryfile values(#{accessoryId},#{fileId},#{accessoryName},#{accessorySize},#{fileTypeInfo.fileTypeId},#{createDate},#{accessoryPath})
+	
+</insert>
+
+<delete id="deleteAccessoryFile" parameterType="int">
+	delete from accessoryfile where accessoryId=#{accessoryId}
+</delete>
+
+<resultMap type="AccessoryFile" id="AccessoryFileMap">
+	<result column="AccessoryId" property="accessoryId"/>
+	<result column="FileId" property="fileId"/>
+	<result column="AccessoryName" property="accessoryName"/>
+	<result column="AccessorySize" property="accessorySize"/>
+	<result column="CreateDate" property="createDate"/>
+	<result column="AccessoryPath" property="accessoryPath"/>
+</resultMap>
+<resultMap type="AccessoryFile" id="AccessoryFileMapAll" extends="AccessoryFileMap">
+	<association property="fileTypeInfo" column="AccessoryType" javaType="FileTypeInfo">
+		<result column="FileTypeId"  property="fileTypeId"/>
+		<result column="FileTypeName"  property="fileTypeName"/>
+		<result column="FileTypeImage"  property="fileTypeImage"/>
+		<result column="FileTypeSuffix"  property="fileTypeSuffix"/>
+	</association>
+	
+</resultMap>
+	
+
+</mapper>

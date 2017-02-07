@@ -1,0 +1,66 @@
+package com.beifeng.controller.hr;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.beifeng.biz.hr.IBranchInfoBiz;
+import com.beifeng.model.BranchInfo;
+import com.beifeng.model.Page;
+import com.beifeng.model.PageBranchInfo;
+
+@Controller
+public class BranchInfoHRController {
+	@Autowired
+	private IBranchInfoBiz iBranchInfoBiz;
+	
+	@RequestMapping("queryBranchInfo")
+	public ModelAndView queryBranchInfo(){
+		List<BranchInfo> list = iBranchInfoBiz.queryBranchInfo();
+		ModelAndView ma = new ModelAndView();
+		ma.addObject("list", list);
+		ma.setViewName("hr/BranchInfo");
+		return ma;
+	}
+	/*
+	 * 分页显示
+	 */
+	@RequestMapping("queryPageBranchInfo")
+	public ModelAndView queryPageBranchInfo(Page page ){
+		if(page.getCurrentPage()==0)
+			page.setCurrentPage(1);
+		PageBranchInfo pbInfo = iBranchInfoBiz.queryPageBranchInfo(page);
+		ModelAndView ma = new ModelAndView();
+		ma.addObject("pbInfo", pbInfo);
+		ma.setViewName("hr/BranchInfo");
+		return ma;
+	}
+	/*
+	 * 删除
+	 */
+	@RequestMapping("delPageBranchInfo")
+	public String delPageBranchInfo(Integer branchId){
+		iBranchInfoBiz.delBranchInfo(branchId);
+		
+		return "forward:queryPageBranchInfo.do";
+	}
+	/*
+	 * 修改
+	 */
+	@RequestMapping("updateBranchInfo")
+	public String updateBranchInfo(BranchInfo branchInfo){
+		iBranchInfoBiz.updateBranchInfo(branchInfo);
+		return "forward:queryPageBranchInfo.do"; 
+	}
+	/*
+	 * 添加
+	 */
+	@RequestMapping("addBranchInfo")
+	public String addBranchInfo(BranchInfo branchInfo){
+		iBranchInfoBiz.addBranchInfo(branchInfo);
+		return "forward:queryPageBranchInfo.do"; 
+	}
+}

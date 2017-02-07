@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.beifeng.dao.hr.IRoleAndStateDao">
+	<!-- 构建映射关系 RoleInfo-->
+	<resultMap type="RoleInfo" id="RoleMap">
+		<result property="roleId" column="RoleId"/>
+		<result property="roleName" column="RoleName"/>
+		<result property="roleDesc" column="RoleDesc"/>
+	</resultMap>
+	
+	<!-- 构建映射关系 UserState-->
+	<resultMap type="UserState" id="UserStateMap">
+		<result property="userStateId" column="UserStateId"/>
+		<result property="userStateName" column="UserStateName"/>
+	</resultMap>
+	
+	<!-- 查询 RoleInfo-->
+	<select id="queryRole" resultMap="RoleMap">
+		select * from roleinfo 
+	</select>
+	
+	<!-- 查询 UserState-->
+	<select id="queryUserState" resultMap="UserStateMap">
+		select * from userstate 
+	</select>
+</mapper>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 必须滴 通过namespace 和 dao接口映射 -->
+<mapper namespace="com.beifeng.dao.cg.IPreContractDaocg">
+<!-- -映射表字段 -->
+	<resultMap type="PreContract" id="preContractMap">
+		<result column="preContractId" property="preContractId" />
+		<result column="userId" property="userId" />
+	</resultMap>
+		
+	<resultMap type="PreContract" id="allMap" extends="preContractMap">
+		<association property="schedule" column="scheduleId" javaType="Schedule">
+			<result column="ScheduleId" property="ScheduleId"/>
+			<result column="Title" property="title" />
+			<result column="Address" property="address" />
+		<!--  <result column="MeetingId" property="meetingId" />  -->
+			<result column="BeginTime" property="beginTime" />
+			<result column="EndTime" property="endTime" />
+			<result column="SchContent" property="schContent" />
+			<result column="CreateUser" property="createUser" />
+			<result column="CreateTime" property="createTime" />
+			<result column="IfPrivate" property="ifPrivate" />
+		</association>
+	
+	</resultMap>
+	<select id="queryScheduleListByName" parameterType="String" resultMap="allMap" >
+		select * from schedule left join meetinginfo
+		on schedule.MeetingId=meetinginfo.MeetingId
+		<where>
+			CreateUser=#{createUser}
+		</where>
+	</select>
+	<select id="queryScheduleById" parameterType="Integer" resultMap="allMap">
+		select * from schedule left join meetinginfo
+		on schedule.MeetingId=meetinginfo.MeetingId
+		<where>
+			ScheduleId=#{scheduleId}
+		</where>
+	</select>
+	<insert id="addScheduleList" parameterType="Schedule" useGeneratedKeys="true" keyProperty="ScheduleId" >
+		insert into schedule(Title,Address,MeetingId,BeginTime,EndTime,SchContent,
+		CreateUser,CreateTime, IfPrivate) 
+		 values(#{title},#{address},
+		#{meetingInfo.meetingId},#{beginTime},#{endTime},#{schContent},#{createUser},#{createTime},#{ifPrivate});
+		
+	</insert>
+	<update id="updateSchedule" parameterType="Integer">
+	update schedule 
+	set Title=#{title},
+		Address=#{address},
+		MeetingId=#{meetingInfo.meetingId},
+		BeginTime=#{beginTime},
+		EndTime=#{endTime},
+		SchContent=#{schContent},	
+		CreateTime=#{createTime}, 
+		IfPrivate=#{ifPrivate}
+		<where>
+			ScheduleId=#{scheduleId} 
+			and CreateUser=#{createUser}
+		</where> 
+	</update>
+	<delete id="delSchedule" parameterType="Integer">
+		delete from Schedule where
+		ScheduleId=#{scheduleId}
+	</delete>
+	
+</mapper>

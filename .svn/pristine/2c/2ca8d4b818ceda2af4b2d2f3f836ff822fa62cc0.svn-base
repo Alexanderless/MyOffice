@@ -1,0 +1,8 @@
+package com.beifeng.dao.login;
+
+import com.beifeng.model.UserInfo;
+
+public interface UserInfoDao {
+	//根据用户名和密码，用于用户登录
+	UserInfo queryUserInf(UserInfo UserInfo);
+}

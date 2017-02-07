@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.beifeng.dao.sm.OperateLogDao">
+	<resultMap type="OperateLog" id="OperateLogMap">
+		<result column="OperateId" property="operateId"/>
+		<result column="UserId" property="userId"/>
+		<result column="OperateName" property="operateName"/>
+		<result column="ObjectId" property="objectId"/>
+		<result column="OperateDesc" property="operateDesc"/>
+		<result column="OperateTime" property="operateTime"/>
+	</resultMap>
+	<select id="searchOpe" parameterType="Time" resultMap="OperateLogMap">
+		select * from operatelog
+		<trim>
+		<if test="beginTime!=null">
+			where OperateTime &gt;#{beginTime}
+		</if>
+		<if test="endTime!=null">
+			and OperateTime &lt;#{endTime}
+		</if>
+		</trim>
+	</select>
+	<delete id="delete" parameterType="java.lang.reflect.Array">
+		delete from operatelog where OperateId in		
+	    <foreach collection="array" index="index" item="item" open="(" separator="," close=")">   
+            #{item}   
+         </foreach> 
+	</delete>
+
+</mapper>

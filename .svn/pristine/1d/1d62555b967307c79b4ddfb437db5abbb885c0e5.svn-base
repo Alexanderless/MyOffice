@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.beifeng.dao.login.UserInfoDao">
+<select id="queryUserInf" resultMap="userinfoMapAll">
+	select * from userinfo where UserName=#{userName} and password =#{passWord};
+</select>
+<resultMap type="UserInfo" id="userinfoMap">
+	<result column="UserId" property="userId"/>
+	<result column="UserName" property="userName"/>
+	<result column="PassWord" property="passWord"/>
+	<result column="Gender" property="gender"/>
+</resultMap>
+
+<resultMap type="UserInfo" extends="userinfoMap" id="userinfoMapAll">
+	<association property="roleInfo" column="RoleId" javaType="RoleInfo">
+	<result column="RoleId"  property="roleId"/>
+	<result column="RoleName"  property="roleName"/>
+	</association>
+	<association property="departInfo" column="DepartId" javaType="DepartInfo">
+		<result property="departId" column="DepartId"/>
+	</association>
+</resultMap>
+
+</mapper>

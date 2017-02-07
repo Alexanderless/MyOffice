@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.beifeng.dao.ns.IMessageDao">
+	<!-- 配置映射关系 -->
+	<resultMap type="Message" id="MessageMap">
+		<result column="MessageId" property="messageId"/>
+		<result column="Title" property="title"/>
+		<result column="Content" property="content"/>
+		<result column="BeginTime" property="beginTime"/>
+		<result column="endTime" property="endTime"/>
+		<result column="IfPublish" property="ifPublish"/>
+		<result column="RecordTime" property="recordTime"/>
+	</resultMap>
+	
+	<resultMap type="Message" id="MessageAllMap" extends="MessageMap">
+		<association property="messageType" javaType="MessageType" column="TypeId">
+			<result column="MessageTypeId" property="messageTypeId"/>
+			<result column="MessageTypeName" property="messageTypeName"/>
+			<result column="MessageDesc" property="messageDesc"/>
+		</association>
+		<association property="userInfo" javaType="UserInfo" column="FromUserId">
+			<result column="UserId" property="userId" />
+			<result column="UserName" property="userName" />
+			<result column="PassWord" property="passWord" />
+			<result column="Gender" property="gender" />
+		</association>	
+	</resultMap>
+	<!-- 查询全部 -->
+	<select id="queryMessage" resultMap="MessageAllMap" parameterType="PageMessage">
+		SELECT * FROM message mg,messagetype mt,userinfo us WHERE mg.`TypeId`=mt.`MessageTypeId` 
+		AND mg.`FromUserId`=us.`UserId` 
+			<if test="beginTime!=null">
+		 and mg.`BeginTime`&gt;#{beginTime} AND mg.`EndTime`&lt;#{endTime}
+		 	</if>
+	</select>
+	
+	<!-- 查询全部分页显示 -->
+	<select id="queryPageMessage" resultMap="MessageAllMap" parameterType="PageMessage">
+		SELECT * FROM message mg,messagetype mt,userinfo us WHERE mg.`TypeId`=mt.`MessageTypeId` 
+		AND mg.`FromUserId`=us.`UserId` limit #{beginPage},#{pageRecords}
+	</select>
+	
+	<!-- 检索分页查询查询 -->
+	<select id="querySeaMessage" resultMap="MessageAllMap" parameterType="PageMessage">
+		SELECT * FROM message mg,messagetype mt,userinfo us 
+		WHERE mg.`TypeId`=mt.`MessageTypeId` AND mg.`FromUserId`=us.`UserId`
+		<if test="beginTime!=null">
+		 	and mg.`BeginTime`&gt;#{beginTime} AND mg.`EndTime`&lt;#{endTime}
+		 </if>
+		  limit #{beginPage},#{pageRecords}
+	</select>
+	
+	<!-- 通过id查询message -->
+	<select id="queryMsgById" resultMap="MessageAllMap" parameterType="Integer">
+		SELECT * FROM message,messagetype WHERE message.`TypeId`=messageType.`MessageTypeId` AND message.messageId=#{id}
+	</select>
+	
+	<!-- 修改message -->
+	<update id="updataMsg" parameterType="Message">
+		update message set Title=#{title},TypeId=#{messageType.messageTypeId},BeginTime=#{beginTime},EndTime=#{endTime} where MessageId=#{messageId} 
+	</update>
+	
+	<!-- 删除message -->
+	<delete id="delMessage" parameterType="Integer">
+		delete from message where MessageId=#{id}
+	</delete>
+</mapper>

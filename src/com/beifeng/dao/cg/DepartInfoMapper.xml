@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 必须滴 通过namespace 和 dao接口映射 -->
+<mapper namespace="com.beifeng.dao.cg.IDepartInfoDaocg">
+<!-- -映射表字段 -->
+	<resultMap type="DepartInfo" id="departMap">
+		<result column="DepartId" property="departId" />
+		<result column="DepartName" property="departName"/>
+		<!-- <result column="PrincipalUser" property="principalUser" /> -->
+		<result column="ConnectTelNo" property="connectTelNo" />
+		<result column="ConnectMobileTelNo" property="connectMobileTelNo" />
+		<result column="Faxes" property="faxes" />
+	</resultMap>
+	<resultMap type="DepartInfo" id="allMap" extends="departMap">
+		<association property="branchInfo" column="branchId" javaType="BranchInfo">
+			<result column="BranchId" property="branchId"/>
+			<result column="BranchName" property="branchName"/>
+			<result column="BranchShortName" property="branchShortName"/>
+		</association>
+	</resultMap>
+	<select id="queryDepList" resultMap="allMap" >
+		SELECT * from departinfo
+		left join branchinfo
+		 on departinfo.BranchId=branchinfo.BranchId 
+		where branchinfo.BranchId=#{branchId};
+	</select>
+</mapper>

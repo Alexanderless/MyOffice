@@ -1,0 +1,20 @@
+package com.beifeng.model;
+
+public class MessageAndUser {
+	private Message message;
+	private String toUser;
+	public Message getMessage() {
+		return message;
+	}
+	public void setMessage(Message message) {
+		this.message = message;
+	}
+	public String getToUser() {
+		return toUser;
+	}
+	public void setToUser(String toUser) {
+		this.toUser = toUser;
+	}
+	
+	
+}

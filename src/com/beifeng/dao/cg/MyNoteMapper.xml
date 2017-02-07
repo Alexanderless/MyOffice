@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 必须滴 通过namespace 和 dao接口映射 -->
+<mapper namespace="com.beifeng.dao.cg.IMyNoteDaocg">
+<!-- -映射表字段 -->
+	<resultMap type="MyNote" id="standardMap">
+		<result column="NoteId" property="noteId" />
+		<result column="NoteTitle" property="noteTitle" />
+		<result column="NoteContent" property="noteContent" />
+		<result column="CreateTime" property="createTime" />
+		<!-- <result column="CreateUser" property="createUser" /> -->
+	</resultMap>
+	<resultMap type="MyNote" id="allMap" extends="standardMap">
+		<association property="userInfo" column="CreateUser" javaType="UserInfo">
+			<result column="UserId" property="userId"/>
+			<result column="UserName" property="userName"/>
+			<result column="PassWord" property="passWord"/>
+			<!--  <result column="DepartId" property="departId"/> -->
+			<result column="Gender" property="gender"/>
+			<!-- <result column="RoleId" property="roleId"/>  -->
+			<!-- <result column="UserState" property="userState"/> -->
+		</association>
+	</resultMap>
+	<select id="queryMyNoteList" parameterType="String" resultMap="allMap" >
+		select * from mynote 
+		left join userinfo 
+		on mynote.CreateUser=userinfo.UserId
+		where userinfo.UserId=#{userId}
+	</select>
+	<insert id="addMyNote" parameterType="MyNote">
+		insert into mynote( NoteTitle,NoteContent,CreateTime,CreateUser)
+		values(#{noteTitle},#{noteContent},#{createTime},#{userInfo.userId})
+	</insert>
+	<delete id="delMyNote" parameterType="Integer">
+		delete from mynote where
+		NoteId=#{noteId}
+	</delete>
+</mapper>

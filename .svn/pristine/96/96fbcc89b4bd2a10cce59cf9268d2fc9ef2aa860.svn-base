@@ -1,0 +1,7 @@
+package com.beifeng.biz.login;
+
+import com.beifeng.model.UserInfo;
+
+public interface IUserInfoBiz {
+	UserInfo query(UserInfo UserInfo);
+}

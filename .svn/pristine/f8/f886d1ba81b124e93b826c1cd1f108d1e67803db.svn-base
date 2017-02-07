@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="3.0" 
+	xmlns="http://java.sun.com/xml/ns/javaee" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+	http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+  <display-name></display-name>	
+  <welcome-file-list>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
+   <context-param>
+  	<param-name>contextConfigLocation</param-name>
+  	<param-value>classpath:spring-mybatis.xml</param-value>
+  </context-param>
+  <listener>
+  	<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>	
+  </listener>
+  	<!-- 中文乱码配置 -->
+	<filter>
+		<filter-name>characterEncodingFilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>utf-8</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>characterEncodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+
+	<!-- 配置Springmvc核心控制器 -->
+	<servlet>
+		<servlet-name>springmvc</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>classpath:springmvc.xml</param-value>
+		</init-param>
+	</servlet>
+	
+	<servlet>  
+   <servlet-name>goto</servlet-name>  
+   <jsp-file>/WEB-INF/jsp/dom/welcome.html</jsp-file>
+  </servlet>  
+  <servlet-mapping>  
+   <servlet-name>goto</servlet-name>  
+   <url-pattern>/match</url-pattern>  
+  </servlet-mapping> 
+  
+<servlet>  
+   <servlet-name>got</servlet-name>  
+   <jsp-file>/WEB-INF/jsp/dom/serach.jsp</jsp-file>
+  </servlet>  
+  <servlet-mapping>  
+   <servlet-name>got</servlet-name>  
+   <url-pattern>/search</url-pattern>  
+  </servlet-mapping> 
+  
+<servlet>  
+   <servlet-name>gote</servlet-name>  
+   <jsp-file>/WEB-INF/jsp/sm/Roleinp.jsp</jsp-file>
+  </servlet>  
+  <servlet-mapping>  
+   <servlet-name>gote</servlet-name>  
+   <url-pattern>/Roleinp</url-pattern>  
+  </servlet-mapping> 
+  
+
+	<servlet-mapping>
+		<servlet-name>springmvc</servlet-name>
+		<!-- 拦截 /*或者/ 在springmvc中拦截/或者/*会出现访问不到静态资源的问题 解决方法在springmvc配置文件中加一个配置即可解决 
+			如果要是有RESTFul风格必须使用/或者/* *.do或者*.action -->
+		<url-pattern>*.do</url-pattern>
+	</servlet-mapping>
+</web-app>

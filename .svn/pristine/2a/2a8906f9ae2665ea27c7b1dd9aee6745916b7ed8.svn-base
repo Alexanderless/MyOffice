@@ -1,0 +1,50 @@
+<%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%
+String path = request.getContextPath();
+String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+%>
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <base href="<%=basePath%>">
+    
+    <title>文件搜索</title>
+    
+	<meta http-equiv="pragma" content="no-cache">
+	<meta http-equiv="cache-control" content="no-cache">
+	<meta http-equiv="expires" content="0">    
+	<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+	<meta http-equiv="description" content="This is my page">
+	<!--
+	<link rel="stylesheet" type="text/css" href="styles.css">
+	-->
+	<script type="text/javascript" src="js/jquery-1.8.3.js"></script>
+	<script type="text/javascript">
+		$(function(){
+			$("#but").click(function(){
+				$("iframe").attr("src", "search.do");
+			});
+		});
+	</script>
+
+  </head>
+  
+  <body>
+  <table>
+    <caption style="font:18px">文件搜索</caption>
+   <tr><td colspan="2"> <HR style="border:1 dashed #987cb9" width="100%" color=#987cb9 SIZE=1></tr>
+  <tr>
+  	<td>
+		<form action="search.do" method="post">
+			要搜索的文件名：<br /> <input type="text" name="fileName"> <br />
+			<br />附件包含的文字：<br /> <br />
+			<input type="text" name="content" > <br />
+			<br />创建者的姓名：<br /> <input type="text" name="fileOwner" ><br />
+			<input id="but" type="button" value="检索"> <input type="reset" value="退出">
+		</form>
+		</table>
+			<iframe width="700px" height="600px" src="<%=path%>/search"></IFRAME>
+  </body>
+</html>

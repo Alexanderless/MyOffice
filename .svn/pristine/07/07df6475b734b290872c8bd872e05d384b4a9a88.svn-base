@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.beifeng.dao.hr.IUserInfoDao">
+	<!-- 构建映射关系 -->
+	<resultMap type="UserInfo" id="UserInfoMap">
+		<result column="UserId" property="userId" />
+		<result column="UserName" property="userName" />
+		<result column="PassWord" property="passWord" />
+		<result column="Gender" property="gender" />
+		<result column="PicPath" property="picPath" />
+	</resultMap>
+	
+	<!-- 构建多对一关联关系 -->
+	<resultMap type="UserInfo" id="UserInfoAllMap" extends="UserInfoMap">
+		<association property="departInfo" javaType="DepartInfo" column="DepartId">
+			<result column="DepartId" property="departId" />
+			<result column="DepartName" property="departName" />
+			<result column="ConnectTelNo" property="connectTelNo" />
+			<result column="ConnectMobileTelNo" property="connectMobileTelNo" />
+			<result column="Faxes" property="faxes" />
+		</association>
+		
+		<association property="roleInfo" javaType="RoleInfo" column="RoleId">
+			<result column="RoleId" property="roleId" />
+			<result column="RoleName" property="roleName" />
+			<result column="RoleDesc" property="roleDesc" />
+		</association>
+		
+		<association property="userState" javaType="UserState" column="UserStateId">
+			<result column="UserStateId" property="userStateId" />
+			<result column="UserStateName" property="userStateName" />
+		</association>
+	</resultMap>
+	<!-- 查询全部 -->
+	<select id="queryUserInfo" resultMap="UserInfoAllMap">
+		select * from userinfo u,departinfo d,roleinfo r where 
+		u.`DepartId`=d.`DepartId` and u.`RoleId`=r.`RoleId`
+	</select>
+	
+	<!-- 分页查询 -->
+	<select id="queryPageUserInfo" parameterType="PageUserInfo" resultMap="UserInfoAllMap">
+		select * from userinfo u,departinfo d,roleinfo r where 
+		u.`DepartId`=d.`DepartId` and u.`RoleId`=r.`RoleId` order by u.userId limit #{beginPage},#{pageRecords} 
+	</select>
+	
+	<!-- 删除 -->
+	<delete id="delUserINfo" parameterType="Integer">
+		delete from userinfo where userId=#{id}
+	</delete>
+	
+	<!-- 添加 -->
+	<insert id="addUserInfo" parameterType="UserInfo">
+		insert into userinfo(UserId,UserName,Password,DepartId,Gender,RoleId,UserStateId,PicPath)
+		 values(#{userId},#{userName},#{passWord},#{departInfo.departId},#{gender},
+		 #{roleInfo.roleId},#{userState.userStateId},#{picPath})
+		 
+	</insert>
+	
+	<!-- 通过Id查询 -->
+	<select id="queryUserInfoById" parameterType="Integer" resultMap="UserInfoAllMap">
+		select * from userinfo u,departinfo d,roleinfo r,userstate t where 
+		u.`DepartId`=d.`DepartId` and u.`RoleId`=r.`RoleId` and u.UserStateId=t.UserStateId and
+		 u.UserId=#{id}
+	</select>
+	
+	<!-- 修改 -->
+	<update id="updateUserInfo" parameterType="UserInfo">
+		update userinfo set UserName=#{userName},PassWord=#{passWord},DepartId=#{departInfo.departId},Gender=#{gender},RoleId=#{roleInfo.roleId},UserStateId=#{userState.userStateId},PicPath=#{picPath}
+		 where UserId=#{userId} 	
+	</update>
+	
+	<!-- 通过DepartId找user -->
+	<select id="findUserByDepartId" parameterType="Integer" resultMap="UserInfoMap">
+		SELECT * FROM userInfo WHERE departId=#{id}
+	</select>
+</mapper>

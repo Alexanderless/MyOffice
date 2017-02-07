@@ -1,0 +1,18 @@
+package com.beifeng.controller.ns;
+
+
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+
+import com.beifeng.biz.ns.IMessageToUserBiz;
+
+
+@Controller
+public class MessageToUserNSController {
+	
+	@Autowired
+	private IMessageToUserBiz iMessageToUserBiz;
+	
+	
+}

@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 必须滴 通过namespace 和 dao接口映射 -->
+<mapper namespace="com.beifeng.dao.cg.IScheduleDaocg">
+<!-- -映射表字段 -->
+	<resultMap type="Schedule" id="scheduleMap">
+		<result column="ScheduleId" property="scheduleId" />
+		<result column="Title" property="title" />
+		<result column="Address" property="address" />
+		<!--  <result column="MeetingId" property="meetingId" /> -->
+		<result column="BeginTime" property="beginTime" />
+		<result column="EndTime" property="endTime" />
+		<result column="SchContent" property="schContent" />
+		<!-- <result column="CreateUser" property="createUser" /> -->
+		<result column="CreateTime" property="createTime" />
+		<result column="IfPrivate" property="ifPrivate" />
+	</resultMap>
+	  <resultMap type="Schedule" id="standardMap" extends="scheduleMap">
+			<association property="meetingInfo" column="MeetingId" javaType="MeetingInfo">
+				<result column="MeetingId" property="meetingId"/>
+				<result column="MeetingName" property="meetingName"/>
+			</association>
+		<association property="userInfo" column="CreateUser" javaType="UserInfo">
+			<result column="UserId" property="userId"/>
+			<result column="UserName" property="userName"/>
+			<!-- <result column="DepartId" property="departId"/> -->
+			<result column="Gender" property="gender"/>
+			<!-- <result column="RoleId" property="roleId"/>  -->
+			<!-- <result column="UserState" property="userState"/> -->
+		</association>	
+	</resultMap>
+	
+	<!-- 部门类属性与用户之间的对应关系 -->
+	<resultMap type="Schedule" extends="standardMap" id="depMap">
+		<association property="departInfo" column="DepartId" javaType="DepartInfo">
+			<result column="DepartId" property="departId" />
+			<result column="DepartName" property="departName"/>
+			<result column="PrincipalUser" property="principalUser" />
+			<result column="ConnectTelNo" property="connectTelNo" />
+			<result column="ConnectMobileTelNo" property="connectMobileTelNo" />
+			<result column="Faxes" property="faxes" />
+		</association>
+	</resultMap>
+	
+	<!-- 机构类属性与部门之间的对应关系 -->
+	<resultMap type="Schedule" id="allMap" extends="depMap">
+		<association property="branchInfo" column="branchId" javaType="BranchInfo">
+			<result column="BranchId" property="branchId"/>
+			<result column="BranchName" property="branchName"/>
+			<result column="BranchShortName" property="branchShortName"/>
+		</association>
+	</resultMap>
+
+	<!-- 通过创建人查询日程 -->
+	<select id="queryScheduleListByName"  resultMap="standardMap" >
+		select * from schedule 
+		left join meetinginfo
+		on schedule.MeetingId=meetinginfo.MeetingId
+		left join userinfo
+		on schedule.CreateUser=userinfo.UserId
+		 where schedule.CreateUser=#{userId}; 
+	</select>
+	<!--通过ScheduleId 查询日程  -->
+	<select id="queryScheduleById" parameterType="Integer" resultMap="standardMap">
+		select * from schedule 
+		left join meetinginfo
+		on schedule.MeetingId=meetinginfo.MeetingId
+		left join userinfo
+		on schedule.CreateUser=userinfo.UserId
+		<where>
+			schedule.ScheduleId=#{scheduleId}
+		</where>	
+	</select>
+	<!--通过模糊条件（部门 、公司、姓名） 查询日程  -->
+	<select id="queryScheduleByMany" parameterType="Schedule" resultMap="allMap">
+		SELECT `schedule`.Address,`schedule`.BeginTime,`schedule`.SchContent,`schedule`.Title,meetinginfo.MeetingName,branchinfo.BranchName,departinfo.DepartName,userinfo.UserName from departinfo 
+		LEFT JOIN  branchinfo
+		on departinfo.BranchId=branchinfo.BranchId
+		LEFT JOIN userinfo
+		ON userinfo.DepartId=departinfo.DepartId
+		LEFT JOIN `schedule`
+		on userinfo.UserId=`schedule`.CreateUser
+		left JOIN meetinginfo
+		on meetinginfo.MeetingId=`schedule`.MeetingId
+		<where>
+			<if test="branchInfo.branchId!=null">
+			branchinfo.BranchId=#{branchInfo.branchId}
+			</if>
+			<if test="departInfo.departId!=null">
+			and  departinfo.DepartId=#{departInfo.departId}
+			</if>	
+			<if test="userInfo.userId!=null">
+			and	userinfo.UserId=#{userInfo.userId}
+			</if>
+		 	<if test="createTime!=null">
+			 and schedule.CreateTime=#{createTime}
+			</if> 
+		</where>
+	</select>
+	
+	<!-- 添加日程 -->
+	<insert id="addScheduleList" parameterType="Schedule" useGeneratedKeys="true" keyProperty="ScheduleId" >
+		insert into schedule(Title,Address,MeetingId,BeginTime,EndTime,SchContent,
+		CreateUser,CreateTime, IfPrivate) 
+		 values(#{title},#{address},
+		#{meetingInfo.meetingId},#{beginTime},#{endTime},#{schContent},#{userInfo.userId},#{createTime},#{ifPrivate});		
+	</insert>
+	<!--修改日程  -->
+	<update id="updateSchedule" parameterType="Integer">
+	update schedule 
+	set Title=#{title},
+		Address=#{address},
+		MeetingId=#{meetingInfo.meetingId},
+		BeginTime=#{beginTime},
+		EndTime=#{endTime},
+		SchContent=#{schContent},	
+		CreateTime=#{createTime}, 
+		IfPrivate=#{ifPrivate}
+		<where>
+			ScheduleId=#{scheduleId} 
+			and CreateUser=#{userInfo.userId}
+		</where> 
+	</update>
+	<!--删除日程  -->
+	<delete id="delSchedule" parameterType="Integer">
+		delete from Schedule where
+		ScheduleId=#{scheduleId}
+	</delete>
+	
+</mapper>

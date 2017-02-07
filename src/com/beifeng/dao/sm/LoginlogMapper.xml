@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.beifeng.dao.sm.LoginlogDao">
+	<resultMap type="Loginlog" id="LoginlogMap">
+	<result column="LoginId" property="loginId"/>
+	<result column="LoginTime" property="loginTime"/>
+	<result column="IfSuccess" property="ifSuccess"/>
+	<result column="LoginUserIp" property="loginUserIp"/>
+	<result column="LoginDesc" property="loginDesc"/>
+	</resultMap>
+	
+	<resultMap type="Loginlog" extends="LoginlogMap" id="LoginlogMapAll">
+	<association property="userInfo" column="UserId" javaType="UserInfo">
+	<result column="UserName" property="userName"/>
+	</association>
+	</resultMap>
+	
+	<select id="query" parameterType="Time" resultMap="LoginlogMapAll">
+		select * from loginlog l,userinfo u where l.UserId=u.UserId
+		<trim>
+		<if test="beginTime!=null">
+			and LoginTime &gt;#{beginTime}
+		</if>
+		<if test="endTime!=null">
+			and  LoginTime &lt;#{endTime}
+		</if>	
+		</trim>
+	</select>
+	
+	<delete id="delete" parameterType="java.lang.reflect.Array">
+		delete from loginlog where LoginId in		
+	    <foreach collection="array" index="index" item="item" open="(" separator="," close=")">   
+            #{item}   
+         </foreach> 
+	</delete>
+
+</mapper>

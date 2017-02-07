@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.beifeng.dao.ns.IMessageToUserDao">
+	<!-- 配置映射关系 -->
+	<resultMap type="MessageToUser" id="MessageToUserMap">
+		
+	</resultMap>
+	
+	<!-- messageToUser构建外键关联关系 -->
+	<resultMap type="MessageToUser" id="MessageToUserAllMap">
+		 <result column="IfRead" property="ifRead" />
+		 <result column="MsgId" property="msgId" />
+		<association property="userInfo" javaType="UserInfo" column="ToUserId">
+			<result column="UserId" property="userId" />
+			<result column="UserName" property="userName" />
+			<result column="PassWord" property="passWord" />
+			<result column="Gender" property="gender" />
+		</association>
+	</resultMap>
+		
+	<select id="queryMessageToUser" resultMap="MessageToUserAllMap" parameterType="Integer">
+	   SELECT * FROM messagetouser m,userinfo u WHERE m.`ToUserId`=u.`UserId` AND m.msgid=#{id}	
+	</select>
+	
+	<!-- 删除messagetouser -->
+	<delete id="delMessagetouser" parameterType="Integer">
+		delete from messagetouser where MsgId=#{id}
+	</delete>
+	
+	<!--根据id查messageToUser  -->
+	<select id="queryMTUById" parameterType="Integer" resultMap="MessageToUserAllMap">
+		SELECT * FROM messagetouser WHERE ToUserId=1000 OR ToUserId=#{id}
+	</select>
+	
+	<select id="" parameterType="Integer" resultMap="MessageToUserAllMap">
+		SELECT * FROM messagetouser mg INNER JOIN message ms ON mg.MsgId=ms.MessageId WHERE (mg.ToUserId=1000 OR mg.ToUserId=#{id}) AND ms.IfPublish=0
+	</select>
+</mapper>

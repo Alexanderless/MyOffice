@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 必须滴 通过namespace 和 dao接口映射 -->
+<mapper namespace="com.beifeng.dao.cg.IBranchInfoDaocg">
+<!-- -映射表字段 -->
+	<resultMap type="BranchInfo" id="branchMap">
+		<id column="BranchId" property="branchId"/>
+		<result column="BranchId" property="branchId"/>
+		<result column="BranchName" property="branchName"/>
+		<result column="BranchShortName" property="branchShortName"/>
+		<!-- <collection property="list" ofType="DepartInfo">
+			<id column="BranchId" property="branchId"/>	
+		</collection> -->
+	</resultMap>
+	
+	
+	
+	<select id="queryBranch" resultMap="branchMap" >
+		select * from  branchinfo;
+	</select>
+</mapper>

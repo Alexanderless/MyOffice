@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.beifeng.dao.hr.IBranchInfoDao">
+	<!-- 配置映射关系 -->
+	<resultMap type="BranchInfo" id="BranchInfoMap">
+		<result column="BranchId" property="branchId" />
+		<result column="BranchName" property="branchName" />
+		<result column="BranchShortName" property="branchShortName" />
+	</resultMap>
+	
+	<select id="queryBranchInfo" resultMap="BranchInfoMap">
+		select * from branchInfo
+	</select>
+	
+	<!-- 分页查询 -->
+	<select id="queryPageBranchInfo" parameterType="Page" resultMap="BranchInfoMap">
+		select * from branchInfo limit #{beginPage},#{pageRecords}		
+	</select>
+	
+	<!-- 删除 -->
+	<select id="delBranchInfo" parameterType="Integer">
+		delete from branchInfo where branchId=#{id}
+	</select>
+	
+	<!-- 修改 -->
+	<update id="updateBranchInfo" parameterType="BranchInfo">
+		update branchInfo set BranchName=#{branchName},
+		BranchShortName=#{branchShortName} where BranchId=#{branchId}
+	</update>
+	
+	<!-- 添加 -->
+	<insert id="addBranchInfo" parameterType="BranchInfo">
+		insert into branchInfo (BranchName,BranchShortName) values (#{branchName},#{branchShortName})
+	</insert>
+</mapper>

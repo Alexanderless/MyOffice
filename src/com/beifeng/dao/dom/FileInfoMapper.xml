@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.beifeng.dao.dom.FileInfoDao">
+<!-- 查询文件所有信息 -->
+<select id="query" resultMap="FileInfoMapAll">
+	select * from fileinfo fl,filetypeinfo ft  where fl.FileType=ft.FileTypeId order by fileId asc;
+</select>
+<!-- 查询文件id为fileId的文件 -->
+<select id="queryByfileId" parameterType="int" resultMap="FileInfoMapAll">
+	select * from fileinfo fl,filetypeinfo ft  where fl.FileType=ft.FileTypeId and FileId=#{fileId} order by fileId asc;
+</select>
+<!-- 查询父节点为pid的文件信息 -->
+<select id="queryBypid"  resultMap="FileInfoMapAll">
+	select * from fileinfo fl,filetypeinfo ft  where fl.FileType=ft.FileTypeId and ParentId=#{pid} order by fileId asc;
+</select>
+
+<!-- 如果IfDelete=2：还原   如果IfDelete=0：彻底删除-->
+<select id="update" parameterType="FileInfo">
+	update fileinfo set IfDelete=#{ifDelete} where FileId=#{fileId};
+</select>
+
+<insert id="addFileIn" parameterType="FileInfo" useGeneratedKeys="true" keyProperty="fileId">
+	insert into fileinfo values(#{fileId},#{fileName},#{fileTypeInfo.fileTypeId},#{remark},#{fileOwner},#{createDate},#{parentId},#{filePath},#{ifDelete})
+</insert>
+
+<update id="updateFileIn" parameterType="FileInfo">
+	update fileinfo set FileName=#{fileName},Remark=#{remark} where FileId=#{fileId};
+</update>
+
+<select id="count" resultType="int">
+	select count(*) from fileinfo
+</select>
+
+<!-- 检索文件 -->
+<select id="search" parameterType="FileInfo" resultMap="FileInfoMapAll">
+	select * from fileinfo,filetypeinfo where fileinfo.FileType=filetypeinfo.FileTypeId
+	<trim>
+		<if test="fileName!=null">
+			and FileName=#{fileName}
+		</if>
+
+		<if test="fileOwner!=null">
+			and FileOwner=#{fileOwner}
+		</if>
+		
+	<!-- 	附件中包含的内容等待拓展 -->
+	</trim>
+	limit #{pageUtil.beforeSize},#{pageUtil.pageCount}
+</select>
+
+<resultMap type="FileInfo" id="FileInfoMap">
+	<result column="FileId" property="fileId"/>
+	<result column="FileName" property="fileName"/>
+	<result column="Remark" property="remark"/>
+	<result column="FileOwner" property="fileOwner"/>
+	<result column="CreateDate" property="createDate"/>
+	<result column="ParentId" property="parentId"/>
+	<result column="FilePath" property="filePath"/>
+	<result column="IfDelete" property="ifDelete"/>	
+</resultMap>
+
+<resultMap type="FileInfo" extends="FileInfoMap"  id="FileInfoMapAll" >
+	<association property="fileTypeInfo" column="FileType" javaType="FileTypeInfo">
+		<result column="FileTypeId"  property="fileTypeId"/>
+		<result column="FileTypeName"  property="fileTypeName"/>
+		<result column="FileTypeImage"  property="fileTypeImage"/>
+		<result column="FileTypeSuffix"  property="fileTypeSuffix"/>
+	</association>
+</resultMap>
+
+</mapper>

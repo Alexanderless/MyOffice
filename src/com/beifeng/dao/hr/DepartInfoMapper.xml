@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.beifeng.dao.hr.IDepartInfoDao">
+	<!-- 配置映射关系 -->
+	<resultMap type="com.beifeng.model.DepartInfo" id="DepartInfoMap">
+		<result column="DepartId" property="departId" />
+		<result column="DepartName" property="departName" />
+		<result column="ConnectTelNo" property="connectTelNo" />
+		<result column="ConnectMobileTelNo" property="connectMobileTelNo" />
+		<result column="Faxes" property="faxes" />
+	</resultMap>
+	
+	<!-- 构建多对一关联关系 -->
+	<resultMap type="com.beifeng.model.DepartInfo" id="DepartInfoMapAll" extends="DepartInfoMap">
+		<association property="userInfo" javaType="com.beifeng.model.UserInfo" column="PrincipalUser">
+			<result column="UserId" property="userId" />
+			<result column="UserName" property="userName" />
+			<result column="PassWord" property="passWord" />
+			<result column="Gender" property="gender" />
+		</association>
+		
+		<association property="branchInfo" javaType="com.beifeng.model.BranchInfo" column="BranchId">
+			<result column="BranchId" property="branchId" />
+			<result column="BranchName" property="branchName" />
+			<result column="BranchShortName" property="branchShortName" />
+		</association>
+	</resultMap>
+	<!-- 查看 -->
+	<select id="queryDepartInfo" resultMap="DepartInfoMapAll">
+		SELECT * FROM departinfo d,branchinfo b,userinfo u WHERE 
+		d.`PrincipalUser`=u.`UserId` AND d.`BranchId`=b.`BranchId`
+	</select>
+	
+	<!-- 根据Id查部门 -->
+	<select id="queryDepartInfoById" resultMap="DepartInfoMapAll" parameterType="Integer">
+		SELECT * FROM departinfo d,branchinfo b,userinfo u WHERE 
+		d.`PrincipalUser`=u.`UserId` AND d.`BranchId`=b.`BranchId` and d.DepartId=#{id}
+	</select>
+	
+	<!-- 分页显示 -->
+	<select id="queryPageDepartInfo" parameterType="com.beifeng.model.PageDepartInfo" resultMap="DepartInfoMapAll">
+		SELECT * FROM departinfo d,branchinfo b,userinfo u WHERE 
+		d.`PrincipalUser`=u.`UserId` AND d.`BranchId`=b.`BranchId` 
+		limit #{beginPage},#{pageRecords} 
+	</select>
+	<!-- 删除 -->
+	<delete id="delDepartInfo" parameterType="Integer">
+		delete from departinfo where departId=#{id}
+	</delete>
+	
+	<!-- 添加 -->
+	<insert id="addDepartInfo" parameterType="com.beifeng.model.DepartInfo">
+		insert into departInfo (DepartName,ConnectTelNo,ConnectMobileTelNo,Faxes,BranchId) values (
+		#{departName},#{connectTelNo},#{connectMobileTelNo},#{faxes},#{branchInfo.branchId})
+	</insert>
+	
+	<!-- 通过branchId来查询 -->
+	<select id="queryDepartById" parameterType="Integer" resultMap="DepartInfoMap">
+		SELECT * FROM DepartInfo WHERE BranchId=#{branchId}
+	</select>
+</mapper>
